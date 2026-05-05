@@ -1,63 +1,117 @@
-import Image from "next/image";
+'use client';
+
+import { useResumeStore } from '@/store/resumeStore';
+import { ResumeForm } from '@/components/ResumeForm';
+import { ResumePreview } from '@/components/ResumePreview';
+import { ATSChecklist } from '@/components/ATSChecklist';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { FileText, Eye, Sparkles, LayoutTemplate } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Home() {
+  const { resumeData, analysisResult, isAnalyzing, setIsAnalyzing, setAnalysisResult } = useResumeStore();
+  const [activeTab, setActiveTab] = useState('editor');
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resumeData),
+      });
+      const result = await response.json();
+      setAnalysisResult(result);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen app-background">
+      <header className="border-b border-subtle/50 bg-background/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+              <LayoutTemplate className="h-3.5 w-3.5 text-primary" />
+            </div>
+            <h1 className="text-[13px] font-medium text-foreground/90">ATS-CV</h1>
+          </div>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+            className="h-7 text-[11px] gap-1.5 border-subtle hover:bg-primary/5 transition-colors"
+          >
+            <Sparkles className={`h-3 w-3 ${isAnalyzing ? 'animate-spin' : ''}`} />
+            {isAnalyzing ? 'Analizando...' : 'Analizar'}
+          </Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <main className="max-w-7xl mx-auto p-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <div className="lg:col-span-8 space-y-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="w-full mb-4 bg-transparent border-b border-subtle/50 h-auto p-0 rounded-none">
+                <TabsTrigger 
+                  value="editor" 
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2.5 text-[12px] text-muted-foreground data-[state=active]:text-primary transition-colors"
+                >
+                  <FileText className="h-3.5 w-3.5 mr-1.5" />
+                  Editor
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="preview" 
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2.5 text-[12px] text-muted-foreground data-[state=active]:text-primary transition-colors"
+                >
+                  <Eye className="h-3.5 w-3.5 mr-1.5" />
+                  Preview
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="editor" className="mt-0 animate-fade-in">
+                <ResumeForm />
+              </TabsContent>
+
+              <TabsContent value="preview" className="mt-0 animate-fade-in">
+                <Card className="border-subtle/50 bg-card/60">
+                  <CardHeader className="py-3 border-b border-subtle/50">
+                    <CardTitle className="text-[13px] font-normal text-foreground/80">Vista Previa</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <ResumePreview />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="lg:col-span-4 space-y-4">
+            <div className="animate-slide-up stagger-1">
+              <ATSChecklist />
+            </div>
+            
+            {analysisResult && (
+              <Card className="border-subtle/50 bg-card/60 animate-scale-in">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-muted-foreground uppercase tracking-wide">Score ATS</span>
+                    <span className="text-3xl font-light text-primary">{analysisResult.score}</span>
+                  </div>
+                  <div className={`mt-2.5 text-[11px] font-medium ${analysisResult.atsFriendly ? 'text-success' : 'text-warning'}`}>
+                    {analysisResult.atsFriendly ? '✓ Compatible con ATS' : '⚠ Requiere mejoras'}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </main>
     </div>
