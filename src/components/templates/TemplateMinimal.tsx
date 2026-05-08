@@ -9,7 +9,7 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateMinimal({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[40px] min-h-[650px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
       <div className="mb-6 text-center">
         <h2 className="text-[26px] font-bold tracking-tight">
           {data.personalInfo.firstName} {data.personalInfo.lastName}

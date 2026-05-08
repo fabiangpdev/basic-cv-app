@@ -1,7 +1,17 @@
 import { create } from 'zustand';
 import { ResumeData, initialResumeData, AnalysisResult } from '@/types/resume';
 
-export type TemplateType = 'classic' | 'modern' | 'minimal' | 'professional';
+export type TemplateType = 
+  | 'classic' 
+  | 'modern' 
+  | 'minimal' 
+  | 'professional'
+  | 'timeline'
+  | 'darksidebar'
+  | 'cards'
+  | 'grid'
+  | 'monochrome'
+  | 'horizontal';
 
 interface ResumeStore {
   resumeData: ResumeData;

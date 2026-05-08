@@ -9,7 +9,7 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateModern({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white min-h-[650px] flex text-[10px]">
+    <div className="bg-white h-[842px] flex text-[10px]">
       <div className="w-[28%] bg-slate-900 text-white p-6">
         <div className="text-center mb-8">
           <h2 className="text-[16px] font-bold uppercase leading-tight">
