@@ -4,6 +4,7 @@ import { useResumeStore } from '@/store/resumeStore';
 import { ResumeForm } from '@/components/ResumeForm';
 import { ResumePreview } from '@/components/ResumePreview';
 import { ATSChecklist } from '@/components/ATSChecklist';
+import { AnalysisResult } from '@/components/AnalysisResult';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -98,19 +99,7 @@ export default function Home() {
               <ATSChecklist />
             </div>
             
-            {analysisResult && (
-              <Card className="border-subtle/50 bg-card/60 animate-scale-in">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] text-muted-foreground uppercase tracking-wide">Score ATS</span>
-                    <span className="text-3xl font-light text-primary">{analysisResult.score}</span>
-                  </div>
-                  <div className={`mt-2.5 text-[11px] font-medium ${analysisResult.atsFriendly ? 'text-success' : 'text-warning'}`}>
-                    {analysisResult.atsFriendly ? '✓ Compatible con ATS' : '⚠ Requiere mejoras'}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            {analysisResult && <AnalysisResult />}
           </div>
         </div>
       </main>

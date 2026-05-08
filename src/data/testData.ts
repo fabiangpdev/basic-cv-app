@@ -1,0 +1,90 @@
+import { ResumeData } from '@/types/resume';
+
+export const testResumeData: ResumeData = {
+  personalInfo: {
+    firstName: 'Juan',
+    lastName: 'Pérez García',
+    email: 'juan.perez@email.com',
+    phone: '+34 612 345 678',
+    location: 'Madrid, España',
+    summary: 'Desarrollador full stack con más de 5 años de experiencia en el desarrollo de aplicaciones web y móviles. Passionate about clean code, scalable architectures, and continuous learning. Experienced in leading teams and mentoring junior developers.',
+  },
+  experiences: [
+    {
+      id: '1',
+      company: 'Tech Solutions S.L.',
+      position: 'Senior Full Stack Developer',
+      startDate: '2021',
+      endDate: '2024',
+      current: false,
+      description: 'Desarrollo y mantenimiento de aplicaciones web usando React, Node.js y PostgreSQL. Liderazgo técnico de un equipo de 4 desarrolladores. Implementación de microservicios y optimización de rendimiento.',
+    },
+    {
+      id: '2',
+      company: 'Innovate Digital',
+      position: 'Frontend Developer',
+      startDate: '2019',
+      endDate: '2021',
+      current: false,
+      description: 'Desarrollo de interfaces de usuario responsivas utilizando React y TypeScript. Colaboración con el equipo de diseño para implementar mockups y mejorar la experiencia de usuario.',
+    },
+    {
+      id: '3',
+      company: 'StartUp Ventures',
+      position: 'Junior Developer',
+      startDate: '2017',
+      endDate: '2019',
+      current: false,
+      description: 'Desarrollo de funcionalidades frontend y backend para una aplicación de gestión de proyectos. Trabajo en equipo ágil con metodologías Scrum.',
+    },
+  ],
+  education: [
+    {
+      id: '1',
+      institution: 'Universidad Politécnica de Madrid',
+      degree: 'Grado',
+      field: 'Ingeniería Informática',
+      startDate: '2013',
+      endDate: '2017',
+    },
+    {
+      id: '2',
+      institution: 'IES Juan de la Cierva',
+      degree: 'Formación Profesional',
+      field: 'Desarrollo de Aplicaciones Web',
+      startDate: '2011',
+      endDate: '2013',
+    },
+  ],
+  skills: [
+    { id: '1', name: 'JavaScript' },
+    { id: '2', name: 'TypeScript' },
+    { id: '3', name: 'React' },
+    { id: '4', name: 'Node.js' },
+    { id: '5', name: 'Python' },
+    { id: '6', name: 'PostgreSQL' },
+    { id: '7', name: 'MongoDB' },
+    { id: '8', name: 'Git' },
+    { id: '9', name: 'AWS' },
+    { id: '10', name: 'Docker' },
+  ],
+  certifications: [
+    {
+      id: '1',
+      name: 'AWS Certified Solutions Architect',
+      issuer: 'Amazon Web Services',
+      date: '2023',
+    },
+    {
+      id: '2',
+      name: 'Professional Scrum Master I',
+      issuer: 'Scrum.org',
+      date: '2022',
+    },
+  ],
+  languages: [
+    { id: '1', name: 'Español', level: 'Nativo' },
+    { id: '2', name: 'Inglés', level: 'C1 - Avanzado' },
+    { id: '3', name: 'Francés', level: 'B1 - Intermedio' },
+  ],
+};
