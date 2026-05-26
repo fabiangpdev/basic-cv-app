@@ -9,12 +9,12 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateGrid({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] min-h-[842px] text-[10px]">
       <div className="bg-rose-600 text-white p-5 mb-4">
         <h1 className="text-[24px] font-bold">
           {data.personalInfo.firstName} {data.personalInfo.lastName}
         </h1>
-        <div className="mt-2 text-[9px] text-rose-100 flex gap-4">
+        <div className="mt-4 text-[9px] text-rose-100 flex gap-4">
           {data.personalInfo.email && <span>{data.personalInfo.email}</span>}
           {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
           {data.personalInfo.location && <span>{data.personalInfo.location}</span>}
@@ -74,6 +74,22 @@ export function TemplateGrid({ data }: { data: ReturnType<typeof useResumeStore.
             {data.education.length === 0 && <p className="text-[9px] text-slate-400">Sin educación</p>}
           </div>
         </div>
+
+        {data.projects.length > 0 && (
+          <div className="col-span-2 bg-white border-2 border-rose-200 rounded-lg p-4">
+            <h2 className="text-[11px] font-bold text-rose-700 uppercase mb-3">Proyectos</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {data.projects.map((project) => (
+                <div key={project.id} className="border-l-2 border-rose-300 pl-2">
+                  <p className="text-[10px] font-bold text-slate-800">{project.name}</p>
+                  <p className="text-[8px] text-rose-600">{project.technologies}</p>
+                  <p className="text-[7px] text-slate-400">{formatDate(project.startDate, project.endDate, project.current)}</p>
+                  {project.description && <p className="text-[8px] text-slate-500 mt-1">{project.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

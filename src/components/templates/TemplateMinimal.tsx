@@ -9,7 +9,7 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateMinimal({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] min-h-[842px] text-[10px]">
       <div className="mb-6 text-center">
         <h2 className="text-[26px] font-bold tracking-tight">
           {data.personalInfo.firstName} {data.personalInfo.lastName}
@@ -23,7 +23,7 @@ export function TemplateMinimal({ data }: { data: ReturnType<typeof useResumeSto
 
       <div className="h-[1px] bg-slate-200 mb-8" />
 
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid grid-cols-2 gap-10 mb-8">
         <div>
           {data.personalInfo.summary && (
             <section className="mb-8">
@@ -75,6 +75,22 @@ export function TemplateMinimal({ data }: { data: ReturnType<typeof useResumeSto
           )}
         </div>
       </div>
+
+      {data.projects.length > 0 && (
+        <section>
+          <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-700 mb-3">Proyectos</h3>
+          <div className="grid grid-cols-2 gap-6">
+            {data.projects.map((project) => (
+              <div key={project.id}>
+                <p className="text-[11px] font-bold text-slate-800">{project.name}</p>
+                <p className="text-[9px] text-slate-500 mt-1">{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</p>
+                {project.description && <p className="text-[9px] text-slate-600 mt-2">{project.description}</p>}
+                {project.url && <p className="text-[9px] text-slate-400 mt-1">{project.url}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

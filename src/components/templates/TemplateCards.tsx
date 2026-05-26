@@ -9,12 +9,12 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateCards({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] min-h-[842px] text-[10px]">
       <div className="text-center mb-8">
         <h1 className="text-[26px] font-bold text-emerald-700">
           {data.personalInfo.firstName} {data.personalInfo.lastName}
         </h1>
-        <div className="mt-2 text-[9px] text-slate-500 flex justify-center gap-3">
+        <div className="mt-4 text-[9px] text-slate-500 flex justify-center gap-3">
           {data.personalInfo.email && <span>{data.personalInfo.email}</span>}
           {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
           {data.personalInfo.location && <span>{data.personalInfo.location}</span>}
@@ -60,13 +60,30 @@ export function TemplateCards({ data }: { data: ReturnType<typeof useResumeStore
       )}
 
       {data.skills.length > 0 && (
-        <section className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+        <section className="mb-6 bg-emerald-50 p-4 rounded-lg border border-emerald-100">
           <h2 className="text-[11px] font-bold text-emerald-800 uppercase mb-3">Habilidades</h2>
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill) => (
               <span key={skill.id} className="text-[9px] px-3 py-1.5 bg-white text-emerald-700 border border-emerald-200 rounded-full shadow-sm">
                 {skill.name}
               </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {data.projects.length > 0 && (
+        <section>
+          <h2 className="text-[12px] font-bold text-emerald-700 uppercase mb-3">Proyectos</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {data.projects.map((project) => (
+              <div key={project.id} className="bg-white border border-emerald-200 rounded-lg p-3 shadow-sm">
+                <p className="text-[11px] font-bold text-slate-800">{project.name}</p>
+                <p className="text-[9px] text-emerald-600">{project.technologies}</p>
+                <p className="text-[8px] text-slate-400 mt-1">{formatDate(project.startDate, project.endDate, project.current)}</p>
+                {project.description && <p className="text-[9px] text-slate-500 mt-2">{project.description}</p>}
+                {project.url && <p className="text-[8px] text-slate-400 mt-1">{project.url}</p>}
+              </div>
             ))}
           </div>
         </section>

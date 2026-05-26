@@ -89,4 +89,25 @@ export const testResumeData: ResumeData = {
     { id: '2', language: 'Inglés', level: 'advanced' },
     { id: '3', language: 'Francés', level: 'intermediate' },
   ],
+  projects: [
+    {
+      id: '1',
+      name: 'E-Commerce Platform',
+      description: 'Plataforma de comercio electrónico con carrito de compras, pasarela de pagos y panel de administración. Aumentó las ventas en un 35%.',
+      technologies: 'React, Node.js, PostgreSQL, Stripe',
+      url: 'https://github.com/juanperez/ecommerce',
+      startDate: '2023',
+      endDate: '2024',
+      current: false,
+    },
+    {
+      id: '2',
+      name: 'API REST de Gestión de Tareas',
+      description: 'API RESTful para gestión de proyectos y tareas con autenticación JWT, roles de usuario y notificaciones en tiempo real.',
+      technologies: 'Node.js, Express, MongoDB, Socket.io',
+      startDate: '2022',
+      endDate: '2023',
+      current: false,
+    },
+  ],
 };

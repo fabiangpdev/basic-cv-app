@@ -9,7 +9,7 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateProfessional({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] min-h-[842px] text-[10px]">
       <div className="flex justify-between items-start mb-8">
         <div className="w-[30%]">
           <h2 className="text-[22px] font-bold leading-relaxed">
@@ -23,7 +23,7 @@ export function TemplateProfessional({ data }: { data: ReturnType<typeof useResu
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-2 gap-8 mb-8">
         <div>
           {data.personalInfo.summary && (
             <section className="mb-8 border-l-2 border-blue-500 pl-3">
@@ -77,6 +77,22 @@ export function TemplateProfessional({ data }: { data: ReturnType<typeof useResu
           )}
         </div>
       </div>
+
+      {data.projects.length > 0 && (
+        <section className="border-l-2 border-blue-500 pl-3">
+          <h3 className="text-[11px] font-bold uppercase text-blue-800 mb-3">Proyectos</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {data.projects.map((project) => (
+              <div key={project.id}>
+                <p className="text-[11px] font-bold text-slate-800">{project.name}</p>
+                <p className="text-[10px] text-slate-500 mt-1">{project.technologies} | {formatDate(project.startDate, project.endDate, project.current)}</p>
+                {project.description && <p className="text-[10px] text-slate-600 mt-2 leading-relaxed">{project.description}</p>}
+                {project.url && <p className="text-[9px] text-slate-400 mt-1">{project.url}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

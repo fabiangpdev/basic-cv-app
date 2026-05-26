@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Briefcase, GraduationCap, Sparkles, Award, Languages } from 'lucide-react';
+import { Briefcase, GraduationCap, Sparkles, Award, Languages, FolderGit2 } from 'lucide-react';
 import { ExperienceForm } from './forms/ExperienceForm';
 import { EducationForm } from './forms/EducationForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { CertificationsForm } from './forms/CertificationsForm';
 import { LanguagesForm } from './forms/LanguagesForm';
+import { ProjectsForm } from './forms/ProjectsForm';
 
 export function ResumeForm() {
   const { resumeData, setResumeData } = useResumeStore();
@@ -31,6 +32,7 @@ export function ResumeForm() {
     { value: 'skills', label: 'Skills', icon: Sparkles },
     { value: 'certifications', label: 'Certificados', icon: Award },
     { value: 'languages', label: 'Idiomas', icon: Languages },
+    { value: 'projects', label: 'Proyectos', icon: FolderGit2 },
   ] as const;
 
   return (
@@ -130,6 +132,9 @@ export function ResumeForm() {
             </TabsContent>
             <TabsContent value="languages" className="mt-0">
               <LanguagesForm />
+            </TabsContent>
+            <TabsContent value="projects" className="mt-0">
+              <ProjectsForm />
             </TabsContent>
           </div>
         </Tabs>

@@ -1,10 +1,11 @@
 'use client';
 
+import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
 
 const styles = StyleSheet.create({
-  page: { padding: 45, fontSize: 10, fontFamily: 'Helvetica', lineHeight: 1.5 },
+  page: { padding: 45, fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5 },
   header: { marginBottom: 20, alignItems: 'center' },
   name: { fontSize: 26, fontWeight: 'bold', letterSpacing: 1, textAlign: 'center' },
   contactRow: { flexDirection: 'row', gap: 24, marginTop: 25, justifyContent: 'center' },
@@ -22,22 +23,20 @@ const styles = StyleSheet.create({
   skill: { fontSize: 9, backgroundColor: '#f1f5f9', padding: '3 8', borderRadius: 3, color: '#475569' },
 });
 
-interface ResumePDFMinimalProps {
-  data: ResumeData;
-}
-
 function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
   if (current) return `${startDate} - Actual`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFMinimal({ data }: ResumePDFMinimalProps) {
+export function ResumePDFMinimal({ data }: { data: ResumeData }) {
   const { personalInfo, experiences, education, skills } = data;
 
   return (
-    <Document>
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
       <Page size="A4" style={styles.page}>
-        <View style={styles.header}>
+
+        {/* Header */}
+        <View style={styles.header} wrap={false}>
           <Text style={styles.name}>{personalInfo.firstName} {personalInfo.lastName}</Text>
           <View style={styles.contactRow}>
             {personalInfo.email && <Text style={styles.contact}>{personalInfo.email}</Text>}
@@ -48,20 +47,24 @@ export function ResumePDFMinimal({ data }: ResumePDFMinimalProps) {
 
         <View style={styles.divider} />
 
+        {/* Two-column body */}
         <View style={styles.twoColumn}>
           <View style={styles.column}>
+
+            {/* Summary */}
             {personalInfo.summary && (
-              <View style={styles.section}>
+              <View style={styles.section} wrap={false}>
                 <Text style={styles.sectionTitle}>Sobre mí</Text>
                 <Text style={styles.description}>{personalInfo.summary}</Text>
               </View>
             )}
 
+            {/* Experience */}
             {experiences.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Experiencia</Text>
-                {experiences.map((exp) => (
-                  <View key={exp.id} style={{ marginBottom: 10 }}>
+                {experiences.map((exp, index) => (
+                  <View key={exp.id} wrap={false} style={{ marginBottom: 10 }}>
+                    {index === 0 && <Text style={styles.sectionTitle}>Experiencia</Text>}
                     <Text style={styles.jobTitle}>{exp.position}</Text>
                     <Text style={styles.company}>{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
                     {exp.description && <Text style={{ ...styles.description, marginTop: 3 }}>{exp.description}</Text>}
@@ -69,14 +72,17 @@ export function ResumePDFMinimal({ data }: ResumePDFMinimalProps) {
                 ))}
               </View>
             )}
+
           </View>
 
           <View style={styles.column}>
+
+            {/* Education */}
             {education.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Educación</Text>
-                {education.map((edu) => (
-                  <View key={edu.id} style={{ marginBottom: 10 }}>
+                {education.map((edu, index) => (
+                  <View key={edu.id} wrap={false} style={{ marginBottom: 10 }}>
+                    {index === 0 && <Text style={styles.sectionTitle}>Educación</Text>}
                     <Text style={styles.jobTitle}>{edu.degree}{edu.field && ` en ${edu.field}`}</Text>
                     <Text style={styles.company}>{edu.institution}</Text>
                   </View>
@@ -84,8 +90,9 @@ export function ResumePDFMinimal({ data }: ResumePDFMinimalProps) {
               </View>
             )}
 
+            {/* Skills */}
             {skills.length > 0 && (
-              <View style={styles.section}>
+              <View style={styles.section} wrap={false}>
                 <Text style={styles.sectionTitle}>Habilidades</Text>
                 <View style={styles.skillsContainer}>
                   {skills.map((skill) => (
@@ -94,8 +101,29 @@ export function ResumePDFMinimal({ data }: ResumePDFMinimalProps) {
                 </View>
               </View>
             )}
+
           </View>
         </View>
+
+        {/* Projects — full width below columns */}
+        {data.projects?.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            <View style={styles.twoColumn}>
+              {data.projects?.map((project, index) => (
+                <View key={project.id} wrap={false} style={{ flex: 1, marginBottom: 10 }}>
+                  {index === 0 && (
+                    <Text style={{ ...styles.sectionTitle, marginBottom: 12 }}>Proyectos</Text>
+                  )}
+                  <Text style={styles.jobTitle}>{project.name}</Text>
+                  <Text style={styles.company}>{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</Text>
+                  {project.description && <Text style={{ ...styles.description, marginTop: 3 }}>{project.description}</Text>}
+                  {project.url && <Text style={{ ...styles.date, marginTop: 2 }}>{project.url}</Text>}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
       </Page>
     </Document>
   );

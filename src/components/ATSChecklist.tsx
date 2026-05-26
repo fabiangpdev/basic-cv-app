@@ -1,7 +1,7 @@
 'use client';
 
 import { useResumeStore } from '@/store/resumeStore';
-import { CheckCircle, Circle, Briefcase, GraduationCap, Sparkles, Award, Globe } from 'lucide-react';
+import { CheckCircle, Circle, Briefcase, GraduationCap, Sparkles, Award, Globe, FolderGit2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChecklistSection {
@@ -53,11 +53,17 @@ const checklistSections: ChecklistSection[] = [
     icon: Award,
     check: (data) => data.certifications.length >= 1
   },
-  { 
-    id: 'languages', 
-    label: 'Idiomas', 
+  {
+    id: 'languages',
+    label: 'Idiomas',
     icon: Globe,
     check: (data) => data.languages.length >= 1
+  },
+  {
+    id: 'projects',
+    label: 'Proyectos',
+    icon: FolderGit2,
+    check: (data) => data.projects.length >= 1
   },
 ];
 

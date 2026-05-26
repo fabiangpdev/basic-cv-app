@@ -1,108 +1,125 @@
 'use client';
 
+import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
 
+// page padding 0 so sidebar goes edge-to-edge, matching HTML flex layout
 const styles = StyleSheet.create({
-  page: { padding: 45, fontSize: 10, fontFamily: 'Helvetica', lineHeight: 1.5 },
-  main: { flexDirection: 'row' },
-  sidebar: { width: '30%', backgroundColor: '#1e293b', padding: 25, marginLeft: -25, marginTop: -25, marginBottom: -25, borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
-  content: { width: '70%', paddingLeft: 20 },
-  sidebarName: { fontSize: 20, fontWeight: 'bold', color: '#ffffff', marginBottom: 20, lineHeight: 1.3 },
-  sidebarSection: { marginBottom: 20 },
-  sidebarLabel: { fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 4 },
-  sidebarText: { fontSize: 9, color: '#cbd5e1' },
-  sidebarSkills: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
-  sidebarSkill: { fontSize: 8, padding: '3 6', backgroundColor: '#334155', color: '#e2e8f0', borderRadius: 3 },
-  section: { marginBottom: 15 },
-  sectionTitle: { fontSize: 12, fontWeight: 'bold', color: '#1e293b', borderBottomWidth: 1, borderBottomColor: '#cbd5e1', paddingBottom: 4, marginBottom: 8, textTransform: 'uppercase' },
+  page: { padding: 0, fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5 },
+  container: { flexDirection: 'row', height: '100%' },
+  sidebar: { width: '30%', backgroundColor: '#1e293b', padding: 20, borderTopRightRadius: 10, borderBottomRightRadius: 10 },
+  sidebarName: { fontSize: 20, fontWeight: 'bold', color: '#ffffff', lineHeight: 1.3, marginBottom: 18 },
+  sidebarLabel: { fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 },
+  sidebarText: { fontSize: 9, color: '#cbd5e1', marginBottom: 12 },
+  skillsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 },
+  skill: { fontSize: 8, padding: '3 6', backgroundColor: '#334155', color: '#e2e8f0', borderRadius: 3 },
+  content: { flex: 1, padding: 24 },
+  section: { marginBottom: 14 },
+  sectionTitle: { fontSize: 12, fontWeight: 'bold', color: '#1e293b', borderBottomWidth: 1, borderBottomColor: '#cbd5e1', paddingBottom: 3, marginBottom: 8, textTransform: 'uppercase' },
   jobTitle: { fontSize: 11, fontWeight: 'bold', color: '#1e293b' },
-  company: { fontSize: 9, color: '#64748b' },
-  date: { fontSize: 9, color: '#94a3b8', marginBottom: 3 },
+  meta: { fontSize: 9, color: '#64748b', marginTop: 2 },
   description: { fontSize: 9, color: '#475569', marginTop: 3 },
 });
-
-interface ResumePDFDarkSidebarProps {
-  data: ResumeData;
-}
 
 function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
   if (current) return `${startDate} - Actual`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFDarkSidebar({ data }: ResumePDFDarkSidebarProps) {
+export function ResumePDFDarkSidebar({ data }: { data: ResumeData }) {
   return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.main}>
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
+      <Page size="A4" style={styles.page} wrap={false}>
+        <View style={styles.container}>
+
+          {/* Sidebar */}
           <View style={styles.sidebar}>
             <Text style={styles.sidebarName}>{data.personalInfo.firstName}{'\n'}{data.personalInfo.lastName}</Text>
-            
+
             {data.personalInfo.email && (
-              <View style={styles.sidebarSection}>
+              <>
                 <Text style={styles.sidebarLabel}>Email</Text>
                 <Text style={styles.sidebarText}>{data.personalInfo.email}</Text>
-              </View>
+              </>
             )}
             {data.personalInfo.phone && (
-              <View style={styles.sidebarSection}>
+              <>
                 <Text style={styles.sidebarLabel}>Teléfono</Text>
                 <Text style={styles.sidebarText}>{data.personalInfo.phone}</Text>
-              </View>
+              </>
             )}
             {data.personalInfo.location && (
-              <View style={styles.sidebarSection}>
+              <>
                 <Text style={styles.sidebarLabel}>Ubicación</Text>
                 <Text style={styles.sidebarText}>{data.personalInfo.location}</Text>
-              </View>
+              </>
             )}
 
             {data.skills.length > 0 && (
-              <View style={styles.sidebarSection}>
-                <Text style={styles.sidebarLabel}>Habilidades</Text>
-                <View style={styles.sidebarSkills}>
+              <>
+                <Text style={{ ...styles.sidebarLabel, marginTop: 6 }}>Habilidades</Text>
+                <View style={styles.skillsWrap}>
                   {data.skills.map((skill) => (
-                    <Text key={skill.id} style={styles.sidebarSkill}>{skill.name}</Text>
+                    <Text key={skill.id} style={styles.skill}>{skill.name}</Text>
                   ))}
                 </View>
-              </View>
+              </>
             )}
           </View>
 
+          {/* Main content */}
           <View style={styles.content}>
             {data.personalInfo.summary && (
-              <View style={styles.section}>
+              <View style={styles.section} wrap={false}>
                 <Text style={styles.sectionTitle}>Resumen</Text>
                 <Text style={{ fontSize: 10, color: '#475569' }}>{data.personalInfo.summary}</Text>
               </View>
             )}
 
+            {/* Experience */}
             {data.experiences.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Experiencia</Text>
-                {data.experiences.map((exp) => (
-                  <View key={exp.id} style={{ marginBottom: 10 }}>
+                {data.experiences.map((exp, index) => (
+                  <View key={exp.id} wrap={false} style={{ marginBottom: 10 }}>
+                    {index === 0 && <Text style={styles.sectionTitle}>Experiencia</Text>}
                     <Text style={styles.jobTitle}>{exp.position}</Text>
-                    <Text style={styles.company}>{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                    <Text style={styles.meta}>{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
                     {exp.description && <Text style={styles.description}>{exp.description}</Text>}
                   </View>
                 ))}
               </View>
             )}
 
+            {/* Education */}
             {data.education.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>Educación</Text>
-                {data.education.map((edu) => (
-                  <View key={edu.id} style={{ marginBottom: 8 }}>
-                    <Text style={styles.jobTitle}>{edu.degree} {edu.field && `en ${edu.field}`}</Text>
-                    <Text style={styles.company}>{edu.institution} · {formatDate(edu.startDate, edu.endDate, false)}</Text>
+              <View style={styles.section}>
+                {data.education.map((edu, index) => (
+                  <View key={edu.id} wrap={false} style={{ marginBottom: 8 }}>
+                    {index === 0 && <Text style={styles.sectionTitle}>Educación</Text>}
+                    <Text style={styles.jobTitle}>{edu.degree}{edu.field && ` en ${edu.field}`}</Text>
+                    <Text style={styles.meta}>{edu.institution} · {formatDate(edu.startDate, edu.endDate, false)}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Projects */}
+            {data.projects?.length > 0 && (
+              <View style={styles.section}>
+                {data.projects?.map((project, index) => (
+                  <View key={project.id} wrap={false} style={{ marginBottom: 10 }}>
+                    {index === 0 && <Text style={styles.sectionTitle}>Proyectos</Text>}
+                    <Text style={styles.jobTitle}>{project.name}</Text>
+                    <Text style={styles.meta}>{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</Text>
+                    {project.description && <Text style={styles.description}>{project.description}</Text>}
+                    {project.url && <Text style={{ ...styles.meta, marginTop: 2 }}>{project.url}</Text>}
                   </View>
                 ))}
               </View>
             )}
           </View>
+
         </View>
       </Page>
     </Document>

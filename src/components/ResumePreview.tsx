@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TemplateCarousel } from './TemplateCarousel';
 import { TestDataLoader } from './TestDataLoader';
 import { testResumeData } from '@/data/testData';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import {
   TemplateClassic,
   TemplateModern,
@@ -37,6 +37,10 @@ const SHOW_TEST_LOADER = true;
 
 export function ResumePreview() {
   const { resumeData, selectedTemplate, setResumeData } = useResumeStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const templateRef  = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [templateHeight, setTemplateHeight] = useState(842);
 
   useEffect(() => {
     if (!resumeData.personalInfo.firstName) {
@@ -44,32 +48,37 @@ export function ResumePreview() {
     }
   }, []);
 
-  const hasContent = resumeData.personalInfo.firstName || resumeData.personalInfo.lastName;
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const update = () => {
+      if (containerRef.current) setScale(containerRef.current.offsetWidth / 595);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
 
-  const getPDFDocument = () => {
+  useEffect(() => {
+    if (templateRef.current) setTemplateHeight(templateRef.current.scrollHeight);
+  }, [resumeData, selectedTemplate]);
+
+  const pdfDocument = useMemo(() => {
     switch (selectedTemplate) {
-      case 'modern':
-        return <ResumePDFModern data={resumeData} />;
-      case 'minimal':
-        return <ResumePDFMinimal data={resumeData} />;
-      case 'professional':
-        return <ResumePDFProfessional data={resumeData} />;
-      case 'timeline':
-        return <ResumePDFTimeline data={resumeData} />;
-      case 'darksidebar':
-        return <ResumePDFDarkSidebar data={resumeData} />;
-      case 'cards':
-        return <ResumePDFCards data={resumeData} />;
-      case 'grid':
-        return <ResumePDFGrid data={resumeData} />;
-      case 'monochrome':
-        return <ResumePDFMonochrome data={resumeData} />;
-      case 'horizontal':
-        return <ResumePDFHorizontal data={resumeData} />;
-      default:
-        return <ResumePDFClassic data={resumeData} />;
+      case 'modern':       return <ResumePDFModern       data={resumeData} />;
+      case 'minimal':      return <ResumePDFMinimal      data={resumeData} />;
+      case 'professional': return <ResumePDFProfessional data={resumeData} />;
+      case 'timeline':     return <ResumePDFTimeline     data={resumeData} />;
+      case 'darksidebar':  return <ResumePDFDarkSidebar  data={resumeData} />;
+      case 'cards':        return <ResumePDFCards        data={resumeData} />;
+      case 'grid':         return <ResumePDFGrid         data={resumeData} />;
+      case 'monochrome':   return <ResumePDFMonochrome   data={resumeData} />;
+      case 'horizontal':   return <ResumePDFHorizontal   data={resumeData} />;
+      default:             return <ResumePDFClassic      data={resumeData} />;
     }
-  };
+  }, [resumeData, selectedTemplate]);
+
+  const hasContent = resumeData.personalInfo.firstName || resumeData.personalInfo.lastName;
 
   if (!hasContent) {
     return (
@@ -85,25 +94,34 @@ export function ResumePreview() {
       {SHOW_TEST_LOADER && <TestDataLoader />}
       <TemplateCarousel />
 
-      <div className="flex justify-center overflow-auto py-4">
-        <div className="w-[595px] h-[842px] shadow-xl border border-gray-200">
-          {selectedTemplate === 'classic' && <TemplateClassic data={resumeData} />}
-          {selectedTemplate === 'modern' && <TemplateModern data={resumeData} />}
-          {selectedTemplate === 'minimal' && <TemplateMinimal data={resumeData} />}
-          {selectedTemplate === 'professional' && <TemplateProfessional data={resumeData} />}
-          {selectedTemplate === 'timeline' && <TemplateTimeline data={resumeData} />}
-          {selectedTemplate === 'darksidebar' && <TemplateDarkSidebar data={resumeData} />}
-          {selectedTemplate === 'cards' && <TemplateCards data={resumeData} />}
-          {selectedTemplate === 'grid' && <TemplateGrid data={resumeData} />}
-          {selectedTemplate === 'monochrome' && <TemplateMonochrome data={resumeData} />}
-          {selectedTemplate === 'horizontal' && <TemplateHorizontal data={resumeData} />}
+      <div ref={containerRef} className="w-full py-4">
+        <div
+          className="relative mx-auto"
+          style={{ width: `${595 * scale}px`, height: `${templateHeight * scale}px` }}
+        >
+          <div
+            ref={templateRef}
+            className="absolute top-0 left-0 shadow-xl border border-gray-200"
+            style={{ width: 595, transform: `scale(${scale})`, transformOrigin: 'top left' }}
+          >
+            {selectedTemplate === 'classic'      && <TemplateClassic      data={resumeData} />}
+            {selectedTemplate === 'modern'       && <TemplateModern       data={resumeData} />}
+            {selectedTemplate === 'minimal'      && <TemplateMinimal      data={resumeData} />}
+            {selectedTemplate === 'professional' && <TemplateProfessional data={resumeData} />}
+            {selectedTemplate === 'timeline'     && <TemplateTimeline     data={resumeData} />}
+            {selectedTemplate === 'darksidebar'  && <TemplateDarkSidebar  data={resumeData} />}
+            {selectedTemplate === 'cards'        && <TemplateCards        data={resumeData} />}
+            {selectedTemplate === 'grid'         && <TemplateGrid         data={resumeData} />}
+            {selectedTemplate === 'monochrome'   && <TemplateMonochrome   data={resumeData} />}
+            {selectedTemplate === 'horizontal'   && <TemplateHorizontal   data={resumeData} />}
+          </div>
         </div>
       </div>
 
       <div className="flex justify-center">
         {typeof window !== 'undefined' && (
           <PDFDownloadLink
-            document={getPDFDocument()}
+            document={pdfDocument}
             fileName={`${resumeData.personalInfo.firstName || 'resume'}.pdf`}
           >
             {({ loading }) => (

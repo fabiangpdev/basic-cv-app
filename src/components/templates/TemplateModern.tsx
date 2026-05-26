@@ -9,7 +9,7 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateModern({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white h-[842px] flex text-[10px]">
+    <div className="bg-white min-h-[842px] flex text-[10px]">
       <div className="w-[28%] bg-slate-900 text-white p-6">
         <div className="text-center mb-8">
           <h2 className="text-[16px] font-bold uppercase leading-tight">
@@ -62,13 +62,28 @@ export function TemplateModern({ data }: { data: ReturnType<typeof useResumeStor
         )}
 
         {data.education.length > 0 && (
-          <section>
+          <section className="mb-6">
             <h3 className="text-[11px] font-bold uppercase tracking-wide mb-3 text-slate-800">Educación</h3>
             <div className="space-y-3">
               {data.education.map((edu) => (
                 <div key={edu.id}>
                   <p className="text-[11px] font-bold text-slate-900">{edu.degree}</p>
                   <p className="text-[9px] text-slate-500">{edu.institution}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {data.projects.length > 0 && (
+          <section>
+            <h3 className="text-[11px] font-bold uppercase tracking-wide mb-3 text-slate-800">Proyectos</h3>
+            <div className="space-y-4">
+              {data.projects.map((project) => (
+                <div key={project.id}>
+                  <p className="text-[11px] font-bold text-slate-900">{project.name}</p>
+                  <p className="text-[9px] text-slate-500">{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</p>
+                  {project.description && <p className="text-[9px] text-slate-500 mt-1">{project.description}</p>}
                 </div>
               ))}
             </div>

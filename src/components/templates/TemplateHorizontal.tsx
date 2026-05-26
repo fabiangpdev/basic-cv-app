@@ -9,63 +9,150 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
-      <div className="bg-gradient-to-r from-cyan-600 to-cyan-500 text-white p-6 mb-4 rounded-b-xl">
-        <h1 className="text-[26px] font-bold">
+    <div className="bg-white text-slate-900 min-h-[842px] text-[10px] flex flex-col">
+
+      {/* Header band — edge to edge */}
+      <div className="bg-cyan-600 text-white px-10 py-6 flex-shrink-0">
+        <h1 className="text-[24px] font-bold tracking-wide">
           {data.personalInfo.firstName} {data.personalInfo.lastName}
         </h1>
-        <div className="mt-2 text-[9px] text-cyan-100 flex gap-4">
-          {data.personalInfo.email && <span>{data.personalInfo.email}</span>}
-          {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
+        <div className="mt-4 flex flex-wrap gap-4 text-[9px] text-cyan-100">
+          {data.personalInfo.email    && <span>{data.personalInfo.email}</span>}
+          {data.personalInfo.phone    && <span>{data.personalInfo.phone}</span>}
           {data.personalInfo.location && <span>{data.personalInfo.location}</span>}
+          {data.personalInfo.linkedin && <span>{data.personalInfo.linkedin}</span>}
         </div>
       </div>
 
+      {/* Summary band */}
       {data.personalInfo.summary && (
-        <section className="mb-4 p-3 bg-cyan-50 border-l-4 border-cyan-500">
-          <p className="text-[10px] text-slate-700">{data.personalInfo.summary}</p>
-        </section>
+        <div className="bg-cyan-50 border-b border-cyan-200 px-10 py-4 flex-shrink-0">
+          <p className="text-[10px] text-slate-600 leading-relaxed">{data.personalInfo.summary}</p>
+        </div>
       )}
 
-      <div className="flex gap-4 mb-4">
-        <div className="flex-1">
-          <h2 className="text-[11px] font-bold text-cyan-700 uppercase mb-2">Experiencia</h2>
-          <div className="space-y-2">
-            {data.experiences.slice(0, 3).map((exp) => (
-              <div key={exp.id} className="text-[9px]">
-                <p className="font-bold text-slate-800">{exp.position}</p>
-                <p className="text-slate-500">{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current)}</p>
+      {/* Experience band */}
+      {data.experiences.length > 0 && (
+        <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+            Experiencia
+          </h2>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {data.experiences.map((exp) => (
+              <div key={exp.id}>
+                <p className="font-bold text-[10px] text-slate-800">{exp.position}</p>
+                <p className="text-[9px] text-cyan-600 font-medium">{exp.company}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(exp.startDate, exp.endDate, exp.current)}</p>
+                {exp.description && (
+                  <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">{exp.description}</p>
+                )}
               </div>
             ))}
-            {data.experiences.length === 0 && <p className="text-[9px] text-slate-400">Sin experiencia</p>}
           </div>
         </div>
+      )}
 
-        <div className="flex-1">
-          <h2 className="text-[11px] font-bold text-cyan-700 uppercase mb-2">Educación</h2>
-          <div className="space-y-2">
-            {data.education.slice(0, 3).map((edu) => (
-              <div key={edu.id} className="text-[9px]">
-                <p className="font-bold text-slate-800">{edu.degree} {edu.field && `en ${edu.field}`}</p>
-                <p className="text-slate-500">{edu.institution}</p>
+      {/* Education band */}
+      {data.education.length > 0 && (
+        <div className="bg-slate-50 px-10 py-5 border-b border-slate-100 flex-shrink-0">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+            Educación
+          </h2>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {data.education.map((edu) => (
+              <div key={edu.id}>
+                <p className="font-bold text-[10px] text-slate-800">
+                  {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
+                </p>
+                <p className="text-[9px] text-cyan-600 font-medium">{edu.institution}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(edu.startDate, edu.endDate, edu.current)}</p>
+                {edu.gpa && <p className="text-[9px] text-slate-400">GPA: {edu.gpa}</p>}
               </div>
             ))}
-            {data.education.length === 0 && <p className="text-[9px] text-slate-400">Sin educación</p>}
           </div>
         </div>
+      )}
 
-        <div className="flex-1">
-          <h2 className="text-[11px] font-bold text-cyan-700 uppercase mb-2">Habilidades</h2>
-          <div className="flex flex-wrap gap-1">
-            {data.skills.slice(0, 8).map((skill) => (
-              <span key={skill.id} className="text-[8px] px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded">
+      {/* Skills band */}
+      {data.skills.length > 0 && (
+        <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+            Habilidades
+          </h2>
+          <div className="flex flex-wrap gap-1.5">
+            {data.skills.map((skill) => (
+              <span
+                key={skill.id}
+                className="text-[9px] px-2.5 py-1 bg-cyan-100 text-cyan-700 rounded-full"
+              >
                 {skill.name}
               </span>
             ))}
-            {data.skills.length === 0 && <p className="text-[9px] text-slate-400">Sin habilidades</p>}
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Projects band */}
+      {data.projects.length > 0 && (
+        <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+            Proyectos
+          </h2>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {data.projects.map((project) => (
+              <div key={project.id}>
+                <p className="font-bold text-[10px] text-slate-800">{project.name}</p>
+                <p className="text-[9px] text-cyan-600 font-medium">{project.technologies}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(project.startDate, project.endDate, project.current)}</p>
+                {project.description && (
+                  <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">{project.description}</p>
+                )}
+                {project.url && <p className="text-[8px] text-slate-400 mt-0.5">{project.url}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Certifications + Languages band */}
+      {(data.certifications.length > 0 || data.languages.length > 0) && (
+        <div className="bg-slate-50 px-10 py-5 flex-shrink-0">
+          <div className="grid grid-cols-2 gap-8">
+            {data.certifications.length > 0 && (
+              <div>
+                <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+                  Certificaciones
+                </h2>
+                <div className="space-y-1.5">
+                  {data.certifications.map((cert) => (
+                    <div key={cert.id}>
+                      <p className="text-[10px] font-medium text-slate-800">{cert.name}</p>
+                      <p className="text-[9px] text-slate-400">{cert.issuer} · {cert.date}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.languages.length > 0 && (
+              <div>
+                <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
+                  Idiomas
+                </h2>
+                <div className="flex flex-wrap gap-1.5">
+                  {data.languages.map((lang) => (
+                    <span
+                      key={lang.id}
+                      className="text-[9px] px-2.5 py-1 border border-cyan-300 text-slate-600 rounded-full"
+                    >
+                      {lang.language} · {lang.level}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

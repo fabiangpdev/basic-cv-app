@@ -9,12 +9,12 @@ function formatDate(startDate: string, endDate: string | undefined, current: boo
 
 export function TemplateClassic({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
   return (
-    <div className="bg-white text-slate-900 p-[45px] h-[842px] text-[10px]">
+    <div className="bg-white text-slate-900 p-[45px] min-h-[842px] text-[10px]">
       <div className="text-center pb-4 mb-3">
         <h2 className="text-[22px] font-bold uppercase tracking-wider">
           {data.personalInfo.firstName} {data.personalInfo.lastName}
         </h2>
-        <div className="mt-2 text-[10px] text-slate-500 space-y-1.5">
+        <div className="mt-4 text-[10px] text-slate-500 space-y-1.5">
           {data.personalInfo.email && <p>{data.personalInfo.email}</p>}
           {data.personalInfo.phone && <p>{data.personalInfo.phone}</p>}
           {data.personalInfo.location && <p>{data.personalInfo.location}</p>}
@@ -58,13 +58,29 @@ export function TemplateClassic({ data }: { data: ReturnType<typeof useResumeSto
       )}
 
       {data.skills.length > 0 && (
-        <section>
+        <section className="mb-6">
           <h3 className="text-[11px] font-bold uppercase tracking-wide mb-3 text-slate-700 border-b border-slate-300 pb-1">Habilidades</h3>
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill) => (
               <span key={skill.id} className="text-[9px] px-2.5 py-1 bg-slate-100 text-slate-700 rounded-sm">
                 {skill.name}
               </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {data.projects.length > 0 && (
+        <section>
+          <h3 className="text-[11px] font-bold uppercase tracking-wide mb-3 text-slate-700 border-b border-slate-300 pb-1">Proyectos</h3>
+          <div className="space-y-4">
+            {data.projects.map((project) => (
+              <div key={project.id}>
+                <p className="text-[11px] font-bold">{project.name}</p>
+                <p className="text-[9px] text-slate-500">{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</p>
+                {project.description && <p className="text-[9px] text-slate-600 mt-2 leading-relaxed">{project.description}</p>}
+                {project.url && <p className="text-[9px] text-slate-400 mt-1">{project.url}</p>}
+              </div>
             ))}
           </div>
         </section>

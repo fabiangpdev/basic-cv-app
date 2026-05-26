@@ -51,16 +51,25 @@ export interface Language {
   level: 'basic' | 'intermediate' | 'advanced' | 'native';
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  technologies: string;
+  url?: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+}
+
 export interface ResumeData {
-  id?: string;
   personalInfo: PersonalInfo;
   experiences: Experience[];
   education: Education[];
   skills: Skill[];
   certifications: Certification[];
   languages: Language[];
-  createdAt?: string;
-  updatedAt?: string;
+  projects: Project[];
 }
 
 export interface AnalysisResult {
@@ -93,4 +102,5 @@ export const initialResumeData: ResumeData = {
   skills: [],
   certifications: [],
   languages: [],
+  projects: [],
 };
