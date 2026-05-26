@@ -3,6 +3,7 @@
 import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
+import { Language, resumeLabels } from '@/lib/resumeLabels';
 
 const styles = StyleSheet.create({
   page: { padding: 45, fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5 },
@@ -25,14 +26,15 @@ const styles = StyleSheet.create({
   skill: { fontSize: 9, padding: '4 10', backgroundColor: '#ffffff', color: '#047857', borderWidth: 1, borderColor: '#d1fae5', borderRadius: 12 },
 });
 
-function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
-  if (current) return `${startDate} - Actual`;
+function formatDate(startDate: string, endDate: string | undefined, current: boolean, present: string): string {
+  if (current) return `${startDate} - ${present}`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFCards({ data }: { data: ResumeData }) {
+export function ResumePDFCards({ data, lang }: { data: ResumeData; lang: Language }) {
+  const L = resumeLabels[lang];
   return (
-    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - ${L.docSubject}`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject={L.docSubject} language={lang}>
       <Page size="A4" style={styles.page}>
 
         {/* Header */}
@@ -48,22 +50,22 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
         {/* Summary */}
         {data.personalInfo.summary && (
           <View style={styles.summaryBox} wrap={false}>
-            <Text style={styles.summaryTitle}>Resumen Profesional</Text>
+            <Text style={styles.summaryTitle}>{L.summary}</Text>
             <Text style={styles.summaryText}>{data.personalInfo.summary}</Text>
           </View>
         )}
 
-        {/* Experience — cards in rows of 2, title with first row */}
+        {/* Experience */}
         {data.experiences.length > 0 && (
           <View style={styles.section}>
             <View wrap={false}>
-              <Text style={styles.sectionTitle}>Experiencia Laboral</Text>
+              <Text style={styles.sectionTitle}>{L.experience}</Text>
               <View style={styles.cardGrid}>
                 {data.experiences.slice(0, 2).map((exp) => (
                   <View key={exp.id} style={styles.card}>
                     <Text style={styles.cardTitle}>{exp.position}</Text>
                     <Text style={styles.cardCompany}>{exp.company}</Text>
-                    <Text style={styles.cardDate}>{formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                    <Text style={styles.cardDate}>{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                     {exp.description && <Text style={styles.cardDesc}>{exp.description}</Text>}
                   </View>
                 ))}
@@ -76,7 +78,7 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
                     <View key={exp.id} style={styles.card}>
                       <Text style={styles.cardTitle}>{exp.position}</Text>
                       <Text style={styles.cardCompany}>{exp.company}</Text>
-                      <Text style={styles.cardDate}>{formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                      <Text style={styles.cardDate}>{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                       {exp.description && <Text style={styles.cardDesc}>{exp.description}</Text>}
                     </View>
                   ))}
@@ -90,13 +92,13 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
         {data.education.length > 0 && (
           <View style={styles.section}>
             <View wrap={false}>
-              <Text style={styles.sectionTitle}>Educación</Text>
+              <Text style={styles.sectionTitle}>{L.education}</Text>
               <View style={styles.cardGrid}>
                 {data.education.map((edu) => (
                   <View key={edu.id} style={styles.card}>
-                    <Text style={styles.cardTitle}>{edu.degree} {edu.field && `en ${edu.field}`}</Text>
+                    <Text style={styles.cardTitle}>{edu.degree} {edu.field && `${L.inField} ${edu.field}`}</Text>
                     <Text style={styles.cardCompany}>{edu.institution}</Text>
-                    <Text style={styles.cardDate}>{formatDate(edu.startDate, edu.endDate, false)}</Text>
+                    <Text style={styles.cardDate}>{formatDate(edu.startDate, edu.endDate, false, L.present)}</Text>
                   </View>
                 ))}
               </View>
@@ -107,7 +109,7 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
         {/* Skills */}
         {data.skills.length > 0 && (
           <View style={styles.skillsBox} wrap={false}>
-            <Text style={styles.sectionTitle}>Habilidades</Text>
+            <Text style={styles.sectionTitle}>{L.skills}</Text>
             <View style={styles.skillsGrid}>
               {data.skills.map((skill) => (
                 <Text key={skill.id} style={styles.skill}>{skill.name}</Text>
@@ -120,13 +122,13 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
         {data.projects?.length > 0 && (
           <View style={styles.section}>
             <View wrap={false}>
-              <Text style={styles.sectionTitle}>Proyectos</Text>
+              <Text style={styles.sectionTitle}>{L.projects}</Text>
               <View style={styles.cardGrid}>
                 {data.projects?.slice(0, 2).map((project) => (
                   <View key={project.id} style={styles.card}>
                     <Text style={styles.cardTitle}>{project.name}</Text>
                     <Text style={styles.cardCompany}>{project.technologies}</Text>
-                    <Text style={styles.cardDate}>{formatDate(project.startDate, project.endDate, project.current)}</Text>
+                    <Text style={styles.cardDate}>{formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                     {project.description && <Text style={styles.cardDesc}>{project.description}</Text>}
                     {project.url && <Text style={{ ...styles.cardDate, marginTop: 3 }}>{project.url}</Text>}
                   </View>
@@ -140,7 +142,7 @@ export function ResumePDFCards({ data }: { data: ResumeData }) {
                     <View key={project.id} style={styles.card}>
                       <Text style={styles.cardTitle}>{project.name}</Text>
                       <Text style={styles.cardCompany}>{project.technologies}</Text>
-                      <Text style={styles.cardDate}>{formatDate(project.startDate, project.endDate, project.current)}</Text>
+                      <Text style={styles.cardDate}>{formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                       {project.description && <Text style={styles.cardDesc}>{project.description}</Text>}
                       {project.url && <Text style={{ ...styles.cardDate, marginTop: 3 }}>{project.url}</Text>}
                     </View>

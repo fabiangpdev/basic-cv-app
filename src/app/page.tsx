@@ -12,7 +12,7 @@ import { FileText, Eye, Sparkles, LayoutTemplate, Languages } from 'lucide-react
 import { useState } from 'react';
 
 export default function Home() {
-  const { resumeData, analysisResult, isAnalyzing, setIsAnalyzing, setAnalysisResult, setResumeData } = useResumeStore();
+  const { resumeData, analysisResult, isAnalyzing, setIsAnalyzing, setAnalysisResult, setResumeData, setLanguage } = useResumeStore();
   const [activeTab, setActiveTab] = useState('editor');
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -26,6 +26,7 @@ export default function Home() {
       });
       const translated = await response.json();
       setResumeData(translated);
+      setLanguage('en');
     } catch (error) {
       console.error('Translation failed:', error);
     } finally {

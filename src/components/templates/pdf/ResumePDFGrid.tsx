@@ -3,6 +3,7 @@
 import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
+import { Language, resumeLabels } from '@/lib/resumeLabels';
 
 const styles = StyleSheet.create({
   page: { padding: 45, fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5 },
@@ -28,17 +29,18 @@ const styles = StyleSheet.create({
   fullCell: { padding: 10, borderRadius: 6, marginBottom: 10 },
 });
 
-function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
-  if (current) return `${startDate} - Actual`;
+function formatDate(startDate: string, endDate: string | undefined, current: boolean, present: string): string {
+  if (current) return `${startDate} - ${present}`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFGrid({ data }: { data: ResumeData }) {
+export function ResumePDFGrid({ data, lang }: { data: ResumeData; lang: Language }) {
+  const L = resumeLabels[lang];
   return (
-    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - ${L.docSubject}`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject={L.docSubject} language={lang}>
       <Page size="A4" style={styles.page}>
 
-        {/* Header — edge to edge using negative margins */}
+        {/* Header */}
         <View style={styles.headerBar} wrap={false}>
           <Text style={styles.headerName}>{data.personalInfo.firstName} {data.personalInfo.lastName}</Text>
           <View style={styles.headerContact}>
@@ -51,66 +53,66 @@ export function ResumePDFGrid({ data }: { data: ResumeData }) {
         {/* Summary + Skills row */}
         <View style={[styles.grid2]} wrap={false}>
           <View style={[styles.cell, styles.roseBg]}>
-            <Text style={styles.cellTitle}>Resumen</Text>
+            <Text style={styles.cellTitle}>{L.summary}</Text>
             {data.personalInfo.summary
               ? <Text style={styles.cellText}>{data.personalInfo.summary}</Text>
-              : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>Sin resumen</Text>}
+              : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>—</Text>}
           </View>
           <View style={[styles.cell, styles.roseBg]}>
-            <Text style={styles.cellTitle}>Habilidades</Text>
+            <Text style={styles.cellTitle}>{L.skills}</Text>
             {data.skills.length > 0
               ? <View style={styles.skillsWrap}>
                   {data.skills.map((skill) => (
                     <Text key={skill.id} style={styles.skillChip}>{skill.name}</Text>
                   ))}
                 </View>
-              : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>Sin habilidades</Text>}
+              : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>—</Text>}
           </View>
         </View>
 
-        {/* Experience — full width */}
+        {/* Experience */}
         <View style={[styles.fullCell, styles.whiteBorder]} wrap={false}>
-          <Text style={styles.cellTitle}>Experiencia</Text>
+          <Text style={styles.cellTitle}>{L.experience}</Text>
           {data.experiences.length > 0
             ? <View style={styles.expGrid}>
                 {data.experiences.map((exp) => (
                   <View key={exp.id} style={styles.expItem}>
                     <Text style={styles.expTitle}>{exp.position}</Text>
                     <Text style={styles.expCompany}>{exp.company}</Text>
-                    <Text style={styles.expDate}>{formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                    <Text style={styles.expDate}>{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                     {exp.description && <Text style={styles.expDesc}>{exp.description}</Text>}
                   </View>
                 ))}
               </View>
-            : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>Sin experiencia</Text>}
+            : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>{L.noExperience}</Text>}
         </View>
 
-        {/* Education — full width */}
+        {/* Education */}
         <View style={[styles.fullCell, styles.roseBg]} wrap={false}>
-          <Text style={styles.cellTitle}>Educación</Text>
+          <Text style={styles.cellTitle}>{L.education}</Text>
           {data.education.length > 0
             ? <View style={styles.expGrid}>
                 {data.education.map((edu) => (
                   <View key={edu.id} style={styles.expItem}>
-                    <Text style={styles.eduTitle}>{edu.degree}{edu.field && ` en ${edu.field}`}</Text>
+                    <Text style={styles.eduTitle}>{edu.degree}{edu.field && ` ${L.inField} ${edu.field}`}</Text>
                     <Text style={styles.eduSchool}>{edu.institution}</Text>
-                    <Text style={styles.expDate}>{formatDate(edu.startDate, edu.endDate, false)}</Text>
+                    <Text style={styles.expDate}>{formatDate(edu.startDate, edu.endDate, false, L.present)}</Text>
                   </View>
                 ))}
               </View>
-            : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>Sin educación</Text>}
+            : <Text style={{ ...styles.cellText, color: '#94a3b8' }}>{L.noEducation}</Text>}
         </View>
 
-        {/* Projects — full width */}
+        {/* Projects */}
         {data.projects?.length > 0 && (
           <View style={[styles.fullCell, styles.whiteBorder]} wrap={false}>
-            <Text style={styles.cellTitle}>Proyectos</Text>
+            <Text style={styles.cellTitle}>{L.projects}</Text>
             <View style={styles.expGrid}>
               {data.projects?.map((project) => (
                 <View key={project.id} style={styles.expItem}>
                   <Text style={styles.expTitle}>{project.name}</Text>
                   <Text style={styles.expCompany}>{project.technologies}</Text>
-                  <Text style={styles.expDate}>{formatDate(project.startDate, project.endDate, project.current)}</Text>
+                  <Text style={styles.expDate}>{formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                   {project.description && <Text style={styles.expDesc}>{project.description}</Text>}
                 </View>
               ))}

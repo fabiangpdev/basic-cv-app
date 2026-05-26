@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { ResumeData, initialResumeData, AnalysisResult } from '@/types/resume';
+import { Language } from '@/lib/resumeLabels';
 
-export type TemplateType = 
-  | 'classic' 
-  | 'modern' 
-  | 'minimal' 
+export type TemplateType =
+  | 'classic'
+  | 'modern'
+  | 'minimal'
   | 'professional'
   | 'timeline'
   | 'darksidebar'
@@ -23,6 +24,8 @@ interface ResumeStore {
   setIsAnalyzing: (analyzing: boolean) => void;
   selectedTemplate: TemplateType;
   setSelectedTemplate: (template: TemplateType) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
 }
 
 export const useResumeStore = create<ResumeStore>((set) => ({
@@ -38,4 +41,6 @@ export const useResumeStore = create<ResumeStore>((set) => ({
   setIsAnalyzing: (analyzing) => set({ isAnalyzing: analyzing }),
   selectedTemplate: 'classic',
   setSelectedTemplate: (template) => set({ selectedTemplate: template }),
+  language: 'es',
+  setLanguage: (lang) => set({ language: lang }),
 }));

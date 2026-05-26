@@ -3,6 +3,7 @@
 import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
+import { Language, resumeLabels } from '@/lib/resumeLabels';
 
 const styles = StyleSheet.create({
   page: { padding: 45, fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5 },
@@ -23,16 +24,17 @@ const styles = StyleSheet.create({
   skill: { fontSize: 9, backgroundColor: '#f1f5f9', padding: '3 8', borderRadius: 3, color: '#475569' },
 });
 
-function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
-  if (current) return `${startDate} - Actual`;
+function formatDate(startDate: string, endDate: string | undefined, current: boolean, present: string): string {
+  if (current) return `${startDate} - ${present}`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFMinimal({ data }: { data: ResumeData }) {
+export function ResumePDFMinimal({ data, lang }: { data: ResumeData; lang: Language }) {
+  const L = resumeLabels[lang];
   const { personalInfo, experiences, education, skills } = data;
 
   return (
-    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - ${L.docSubject}`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject={L.docSubject} language={lang}>
       <Page size="A4" style={styles.page}>
 
         {/* Header */}
@@ -54,7 +56,7 @@ export function ResumePDFMinimal({ data }: { data: ResumeData }) {
             {/* Summary */}
             {personalInfo.summary && (
               <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionTitle}>Sobre mí</Text>
+                <Text style={styles.sectionTitle}>{L.aboutMe}</Text>
                 <Text style={styles.description}>{personalInfo.summary}</Text>
               </View>
             )}
@@ -64,9 +66,9 @@ export function ResumePDFMinimal({ data }: { data: ResumeData }) {
               <View style={styles.section}>
                 {experiences.map((exp, index) => (
                   <View key={exp.id} wrap={false} style={{ marginBottom: 10 }}>
-                    {index === 0 && <Text style={styles.sectionTitle}>Experiencia</Text>}
+                    {index === 0 && <Text style={styles.sectionTitle}>{L.experience}</Text>}
                     <Text style={styles.jobTitle}>{exp.position}</Text>
-                    <Text style={styles.company}>{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                    <Text style={styles.company}>{exp.company} · {formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                     {exp.description && <Text style={{ ...styles.description, marginTop: 3 }}>{exp.description}</Text>}
                   </View>
                 ))}
@@ -82,8 +84,8 @@ export function ResumePDFMinimal({ data }: { data: ResumeData }) {
               <View style={styles.section}>
                 {education.map((edu, index) => (
                   <View key={edu.id} wrap={false} style={{ marginBottom: 10 }}>
-                    {index === 0 && <Text style={styles.sectionTitle}>Educación</Text>}
-                    <Text style={styles.jobTitle}>{edu.degree}{edu.field && ` en ${edu.field}`}</Text>
+                    {index === 0 && <Text style={styles.sectionTitle}>{L.education}</Text>}
+                    <Text style={styles.jobTitle}>{edu.degree}{edu.field && ` ${L.inField} ${edu.field}`}</Text>
                     <Text style={styles.company}>{edu.institution}</Text>
                   </View>
                 ))}
@@ -93,7 +95,7 @@ export function ResumePDFMinimal({ data }: { data: ResumeData }) {
             {/* Skills */}
             {skills.length > 0 && (
               <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionTitle}>Habilidades</Text>
+                <Text style={styles.sectionTitle}>{L.skills}</Text>
                 <View style={styles.skillsContainer}>
                   {skills.map((skill) => (
                     <Text key={skill.id} style={styles.skill}>{skill.name}</Text>
@@ -112,10 +114,10 @@ export function ResumePDFMinimal({ data }: { data: ResumeData }) {
               {data.projects?.map((project, index) => (
                 <View key={project.id} wrap={false} style={{ flex: 1, marginBottom: 10 }}>
                   {index === 0 && (
-                    <Text style={{ ...styles.sectionTitle, marginBottom: 12 }}>Proyectos</Text>
+                    <Text style={{ ...styles.sectionTitle, marginBottom: 12 }}>{L.projects}</Text>
                   )}
                   <Text style={styles.jobTitle}>{project.name}</Text>
-                  <Text style={styles.company}>{project.technologies} · {formatDate(project.startDate, project.endDate, project.current)}</Text>
+                  <Text style={styles.company}>{project.technologies} · {formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                   {project.description && <Text style={{ ...styles.description, marginTop: 3 }}>{project.description}</Text>}
                   {project.url && <Text style={{ ...styles.date, marginTop: 2 }}>{project.url}</Text>}
                 </View>

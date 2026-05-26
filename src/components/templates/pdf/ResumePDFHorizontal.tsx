@@ -3,6 +3,7 @@
 import './pdfFonts';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
+import { Language, resumeLabels } from '@/lib/resumeLabels';
 
 const styles = StyleSheet.create({
   page: { fontSize: 10, fontFamily: 'Roboto', lineHeight: 1.5, backgroundColor: '#ffffff' },
@@ -36,16 +37,17 @@ const styles = StyleSheet.create({
   bottomCol: { flex: 1 },
 });
 
-function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
-  if (current) return `${startDate} - Actual`;
+function formatDate(startDate: string, endDate: string | undefined, current: boolean, present: string): string {
+  if (current) return `${startDate} - ${present}`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
+export function ResumePDFHorizontal({ data, lang }: { data: ResumeData; lang: Language }) {
+  const L = resumeLabels[lang];
   const hasBottom = data.certifications.length > 0 || data.languages.length > 0;
 
   return (
-    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - Currículum Vitae`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject="Currículum Vitae" language="es">
+    <Document title={`${data.personalInfo.firstName} ${data.personalInfo.lastName} - ${L.docSubject}`} author={`${data.personalInfo.firstName} ${data.personalInfo.lastName}`} subject={L.docSubject} language={lang}>
       <Page size="A4" style={styles.page}>
 
         {/* Header band */}
@@ -66,17 +68,17 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
           </View>
         )}
 
-        {/* Experience band — rows of 2 kept together */}
+        {/* Experience band */}
         {data.experiences.length > 0 && (
           <View style={styles.band}>
             <View wrap={false}>
-              <Text style={styles.sectionTitle}>Experiencia</Text>
+              <Text style={styles.sectionTitle}>{L.experience}</Text>
               <View style={styles.grid2}>
                 {data.experiences.slice(0, 2).map((exp) => (
                   <View key={exp.id} style={styles.gridItem}>
                     <Text style={styles.itemTitle}>{exp.position}</Text>
                     <Text style={styles.itemSub}>{exp.company}</Text>
-                    <Text style={styles.itemMeta}>{formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                    <Text style={styles.itemMeta}>{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                     {exp.description ? <Text style={styles.itemDesc}>{exp.description}</Text> : null}
                   </View>
                 ))}
@@ -89,7 +91,7 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
                     <View key={exp.id} style={styles.gridItem}>
                       <Text style={styles.itemTitle}>{exp.position}</Text>
                       <Text style={styles.itemSub}>{exp.company}</Text>
-                      <Text style={styles.itemMeta}>{formatDate(exp.startDate, exp.endDate, exp.current)}</Text>
+                      <Text style={styles.itemMeta}>{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</Text>
                       {exp.description ? <Text style={styles.itemDesc}>{exp.description}</Text> : null}
                     </View>
                   ))}
@@ -102,13 +104,13 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
         {/* Education band */}
         {data.education.length > 0 && (
           <View style={styles.bandAlt} wrap={false}>
-            <Text style={styles.sectionTitle}>Educación</Text>
+            <Text style={styles.sectionTitle}>{L.education}</Text>
             <View style={styles.grid2}>
               {data.education.map((edu) => (
                 <View key={edu.id} style={styles.gridItem}>
                   <Text style={styles.itemTitle}>{edu.degree}{edu.field ? ` — ${edu.field}` : ''}</Text>
                   <Text style={styles.itemSub}>{edu.institution}</Text>
-                  <Text style={styles.itemMeta}>{formatDate(edu.startDate, edu.endDate, edu.current)}</Text>
+                  <Text style={styles.itemMeta}>{formatDate(edu.startDate, edu.endDate, edu.current, L.present)}</Text>
                   {edu.gpa ? <Text style={styles.itemMeta}>GPA: {edu.gpa}</Text> : null}
                 </View>
               ))}
@@ -119,7 +121,7 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
         {/* Skills band */}
         {data.skills.length > 0 && (
           <View style={styles.band} wrap={false}>
-            <Text style={styles.sectionTitle}>Habilidades</Text>
+            <Text style={styles.sectionTitle}>{L.skills}</Text>
             <View style={styles.skillsWrap}>
               {data.skills.map((skill) => (
                 <Text key={skill.id} style={styles.skill}>{skill.name}</Text>
@@ -132,13 +134,13 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
         {data.projects?.length > 0 && (
           <View style={styles.bandAlt}>
             <View wrap={false}>
-              <Text style={styles.sectionTitle}>Proyectos</Text>
+              <Text style={styles.sectionTitle}>{L.projects}</Text>
               <View style={styles.grid2}>
                 {data.projects?.slice(0, 2).map((project) => (
                   <View key={project.id} style={styles.gridItem}>
                     <Text style={styles.itemTitle}>{project.name}</Text>
                     <Text style={styles.itemSub}>{project.technologies}</Text>
-                    <Text style={styles.itemMeta}>{formatDate(project.startDate, project.endDate, project.current)}</Text>
+                    <Text style={styles.itemMeta}>{formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                     {project.description ? <Text style={styles.itemDesc}>{project.description}</Text> : null}
                     {project.url ? <Text style={{ ...styles.itemMeta, marginTop: 2 }}>{project.url}</Text> : null}
                   </View>
@@ -152,7 +154,7 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
                     <View key={project.id} style={styles.gridItem}>
                       <Text style={styles.itemTitle}>{project.name}</Text>
                       <Text style={styles.itemSub}>{project.technologies}</Text>
-                      <Text style={styles.itemMeta}>{formatDate(project.startDate, project.endDate, project.current)}</Text>
+                      <Text style={styles.itemMeta}>{formatDate(project.startDate, project.endDate, project.current, L.present)}</Text>
                       {project.description ? <Text style={styles.itemDesc}>{project.description}</Text> : null}
                     </View>
                   ))}
@@ -168,7 +170,7 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
             <View style={styles.bottomGrid}>
               {data.certifications.length > 0 && (
                 <View style={styles.bottomCol}>
-                  <Text style={styles.sectionTitle}>Certificaciones</Text>
+                  <Text style={styles.sectionTitle}>{L.certifications}</Text>
                   {data.certifications.map((cert) => (
                     <View key={cert.id} style={{ marginBottom: 6 }}>
                       <Text style={styles.itemTitle}>{cert.name}</Text>
@@ -179,7 +181,7 @@ export function ResumePDFHorizontal({ data }: { data: ResumeData }) {
               )}
               {data.languages.length > 0 && (
                 <View style={styles.bottomCol}>
-                  <Text style={styles.sectionTitle}>Idiomas</Text>
+                  <Text style={styles.sectionTitle}>{L.languages}</Text>
                   <View style={styles.langWrap}>
                     {data.languages.map((lang) => (
                       <Text key={lang.id} style={styles.lang}>{lang.language} · {lang.level}</Text>

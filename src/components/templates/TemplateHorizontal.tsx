@@ -1,13 +1,15 @@
 'use client';
 
 import { useResumeStore } from '@/store/resumeStore';
+import { Language, resumeLabels } from '@/lib/resumeLabels';
 
-function formatDate(startDate: string, endDate: string | undefined, current: boolean): string {
-  if (current) return `${startDate} - Actual`;
+function formatDate(startDate: string, endDate: string | undefined, current: boolean, present: string): string {
+  if (current) return `${startDate} - ${present}`;
   return endDate ? `${startDate} - ${endDate}` : startDate;
 }
 
-export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResumeStore.getState>['resumeData'] }) {
+export function TemplateHorizontal({ data, lang }: { data: ReturnType<typeof useResumeStore.getState>['resumeData']; lang: Language }) {
+  const L = resumeLabels[lang];
   return (
     <div className="bg-white text-slate-900 min-h-[842px] text-[10px] flex flex-col">
 
@@ -35,14 +37,14 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
       {data.experiences.length > 0 && (
         <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-            Experiencia
+            {L.experience}
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-3">
             {data.experiences.map((exp) => (
               <div key={exp.id}>
                 <p className="font-bold text-[10px] text-slate-800">{exp.position}</p>
                 <p className="text-[9px] text-cyan-600 font-medium">{exp.company}</p>
-                <p className="text-[9px] text-slate-400">{formatDate(exp.startDate, exp.endDate, exp.current)}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(exp.startDate, exp.endDate, exp.current, L.present)}</p>
                 {exp.description && (
                   <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">{exp.description}</p>
                 )}
@@ -56,7 +58,7 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
       {data.education.length > 0 && (
         <div className="bg-slate-50 px-10 py-5 border-b border-slate-100 flex-shrink-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-            Educación
+            {L.education}
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-3">
             {data.education.map((edu) => (
@@ -65,7 +67,7 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
                   {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
                 </p>
                 <p className="text-[9px] text-cyan-600 font-medium">{edu.institution}</p>
-                <p className="text-[9px] text-slate-400">{formatDate(edu.startDate, edu.endDate, edu.current)}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(edu.startDate, edu.endDate, edu.current, L.present)}</p>
                 {edu.gpa && <p className="text-[9px] text-slate-400">GPA: {edu.gpa}</p>}
               </div>
             ))}
@@ -77,7 +79,7 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
       {data.skills.length > 0 && (
         <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-            Habilidades
+            {L.skills}
           </h2>
           <div className="flex flex-wrap gap-1.5">
             {data.skills.map((skill) => (
@@ -96,14 +98,14 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
       {data.projects.length > 0 && (
         <div className="px-10 py-5 border-b border-slate-100 flex-shrink-0">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-            Proyectos
+            {L.projects}
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-3">
             {data.projects.map((project) => (
               <div key={project.id}>
                 <p className="font-bold text-[10px] text-slate-800">{project.name}</p>
                 <p className="text-[9px] text-cyan-600 font-medium">{project.technologies}</p>
-                <p className="text-[9px] text-slate-400">{formatDate(project.startDate, project.endDate, project.current)}</p>
+                <p className="text-[9px] text-slate-400">{formatDate(project.startDate, project.endDate, project.current, L.present)}</p>
                 {project.description && (
                   <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">{project.description}</p>
                 )}
@@ -121,7 +123,7 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
             {data.certifications.length > 0 && (
               <div>
                 <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-                  Certificaciones
+                  {L.certifications}
                 </h2>
                 <div className="space-y-1.5">
                   {data.certifications.map((cert) => (
@@ -136,7 +138,7 @@ export function TemplateHorizontal({ data }: { data: ReturnType<typeof useResume
             {data.languages.length > 0 && (
               <div>
                 <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 mb-3">
-                  Idiomas
+                  {L.languages}
                 </h2>
                 <div className="flex flex-wrap gap-1.5">
                   {data.languages.map((lang) => (

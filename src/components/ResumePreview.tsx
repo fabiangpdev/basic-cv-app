@@ -36,7 +36,7 @@ import {
 const SHOW_TEST_LOADER = true;
 
 export function ResumePreview() {
-  const { resumeData, selectedTemplate, setResumeData } = useResumeStore();
+  const { resumeData, selectedTemplate, setResumeData, language } = useResumeStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const templateRef  = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -65,18 +65,18 @@ export function ResumePreview() {
 
   const pdfDocument = useMemo(() => {
     switch (selectedTemplate) {
-      case 'modern':       return <ResumePDFModern       data={resumeData} />;
-      case 'minimal':      return <ResumePDFMinimal      data={resumeData} />;
-      case 'professional': return <ResumePDFProfessional data={resumeData} />;
-      case 'timeline':     return <ResumePDFTimeline     data={resumeData} />;
-      case 'darksidebar':  return <ResumePDFDarkSidebar  data={resumeData} />;
-      case 'cards':        return <ResumePDFCards        data={resumeData} />;
-      case 'grid':         return <ResumePDFGrid         data={resumeData} />;
-      case 'monochrome':   return <ResumePDFMonochrome   data={resumeData} />;
-      case 'horizontal':   return <ResumePDFHorizontal   data={resumeData} />;
-      default:             return <ResumePDFClassic      data={resumeData} />;
+      case 'modern':       return <ResumePDFModern       data={resumeData} lang={language} />;
+      case 'minimal':      return <ResumePDFMinimal      data={resumeData} lang={language} />;
+      case 'professional': return <ResumePDFProfessional data={resumeData} lang={language} />;
+      case 'timeline':     return <ResumePDFTimeline     data={resumeData} lang={language} />;
+      case 'darksidebar':  return <ResumePDFDarkSidebar  data={resumeData} lang={language} />;
+      case 'cards':        return <ResumePDFCards        data={resumeData} lang={language} />;
+      case 'grid':         return <ResumePDFGrid         data={resumeData} lang={language} />;
+      case 'monochrome':   return <ResumePDFMonochrome   data={resumeData} lang={language} />;
+      case 'horizontal':   return <ResumePDFHorizontal   data={resumeData} lang={language} />;
+      default:             return <ResumePDFClassic      data={resumeData} lang={language} />;
     }
-  }, [resumeData, selectedTemplate]);
+  }, [resumeData, selectedTemplate, language]);
 
   const hasContent = resumeData.personalInfo.firstName || resumeData.personalInfo.lastName;
 
@@ -104,16 +104,16 @@ export function ResumePreview() {
             className="absolute top-0 left-0 shadow-xl border border-gray-200"
             style={{ width: 595, transform: `scale(${scale})`, transformOrigin: 'top left' }}
           >
-            {selectedTemplate === 'classic'      && <TemplateClassic      data={resumeData} />}
-            {selectedTemplate === 'modern'       && <TemplateModern       data={resumeData} />}
-            {selectedTemplate === 'minimal'      && <TemplateMinimal      data={resumeData} />}
-            {selectedTemplate === 'professional' && <TemplateProfessional data={resumeData} />}
-            {selectedTemplate === 'timeline'     && <TemplateTimeline     data={resumeData} />}
-            {selectedTemplate === 'darksidebar'  && <TemplateDarkSidebar  data={resumeData} />}
-            {selectedTemplate === 'cards'        && <TemplateCards        data={resumeData} />}
-            {selectedTemplate === 'grid'         && <TemplateGrid         data={resumeData} />}
-            {selectedTemplate === 'monochrome'   && <TemplateMonochrome   data={resumeData} />}
-            {selectedTemplate === 'horizontal'   && <TemplateHorizontal   data={resumeData} />}
+            {selectedTemplate === 'classic'      && <TemplateClassic      data={resumeData} lang={language} />}
+            {selectedTemplate === 'modern'       && <TemplateModern       data={resumeData} lang={language} />}
+            {selectedTemplate === 'minimal'      && <TemplateMinimal      data={resumeData} lang={language} />}
+            {selectedTemplate === 'professional' && <TemplateProfessional data={resumeData} lang={language} />}
+            {selectedTemplate === 'timeline'     && <TemplateTimeline     data={resumeData} lang={language} />}
+            {selectedTemplate === 'darksidebar'  && <TemplateDarkSidebar  data={resumeData} lang={language} />}
+            {selectedTemplate === 'cards'        && <TemplateCards        data={resumeData} lang={language} />}
+            {selectedTemplate === 'grid'         && <TemplateGrid         data={resumeData} lang={language} />}
+            {selectedTemplate === 'monochrome'   && <TemplateMonochrome   data={resumeData} lang={language} />}
+            {selectedTemplate === 'horizontal'   && <TemplateHorizontal   data={resumeData} lang={language} />}
           </div>
         </div>
       </div>
